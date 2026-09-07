@@ -1,0 +1,65 @@
+{
+  "model": "qwen2.5:7b",
+  "source": "hardcoded section text",
+  "timestamp": "2026-09-07T05:01:24.423018+00:00",
+  "results": [
+    {
+      "label": "Easy rule: CO2 Damper Control (1.1.10)",
+      "model": "qwen2.5:7b",
+      "raw_output": "{\n  \"rule_id\": \"CO2_Damper_Control\",\n  \"trigger_parameter\": \"zone CO2\",\n  \"controlled_parameter\": \"outside air damper position\",\n  \"condition_type\": \"proportional\",\n  \"thresholds\": [ {\"input\": 600, \"output\": 40}, {\"input\": 800, \"output\": 80} ],\n  \"applies_to\": \"each VRV zone\",\n  \"source_text\": \"'In normal operation' the BMS will modulate each VRV zone outside air damper to control zone CO2. The outside air damper will be at its minimum outside air damper position until the zone CO2 reaches its minimum setpoint of 600 ppm (adj.) and will open proportionally to a maximum outside air damper position when the zone CO2 is equal to or greater than 800 ppm (adj.).'\"\n}",
+      "thinking": "",
+      "parsed": {
+        "rule_id": "CO2_Damper_Control",
+        "trigger_parameter": "zone CO2",
+        "controlled_parameter": "outside air damper position",
+        "condition_type": "proportional",
+        "thresholds": [
+          {
+            "input": 600,
+            "output": 40
+          },
+          {
+            "input": 800,
+            "output": 80
+          }
+        ],
+        "applies_to": "each VRV zone",
+        "source_text": "'In normal operation' the BMS will modulate each VRV zone outside air damper to control zone CO2. The outside air damper will be at its minimum outside air damper position until the zone CO2 reaches its minimum setpoint of 600 ppm (adj.) and will open proportionally to a maximum outside air damper position when the zone CO2 is equal to or greater than 800 ppm (adj.).'"
+      },
+      "score": 6,
+      "total": 6,
+      "notes": []
+    },
+    {
+      "label": "Tricky rule: Occupancy+Temp Setpoint (1.1.13)",
+      "model": "qwen2.5:7b",
+      "raw_output": "{\n  \"rule_id\": \"OC1\",\n  \"trigger_parameter\": \"Abakus People Count\",\n  \"controlled_parameter\": \"Thermal Conditions Type and description\",\n  \"condition_type\": \"conditional_branching\",\n  \"branches\": [\n    {\n      \"condition\": \"Abakus People Count > 5\",\n      \"thermal_conditions_type\": \"Narrow\",\n      \"thermal_conditions_description\": \"Fixed setpoint of 22.5C (adj.) with a deadband of 1.5C (adj.)\"\n    },\n    {\n      \"condition\": \"Abakus People Count <= 5\",\n      \"thermal_conditions_type\": \"Wide\",\n      \"thermal_conditions_description\": \"Variable setpoint of 19C to 25C (adj.) with a fixed deadband of 1.5C (adj.) depending on ambient air temperatures.\"\n    }\n  ],\n  \"applies_to\": \"each floor\",\n  \"source_text\": \"\\\"Operation Mode (For Individual floors): All hours\\\\nFloor Occupancy from Lighting System: ON\\\\nHVAC Status: ON\\\\nAbakus People Count: >5\\\\nThermal Conditions Type: Narrow\\\\nThermal Conditions description: Fixed setpoint of 22.5C (adj.) with a deadband of 1.5C (adj.)\\\\n\\\\nOperation Mode (For Individual floors): All hours\\\\nFloor Occupancy from Lighting System: ON\\\\nHVAC Status: ON\\\\nAbakus People Count: <=5\\\\nThermal Conditions Type: Wide\\\\nThermal Conditions description: Variable setpoint of 19C to 25C (adj.) with a fixed deadband of 1.5C (adj.) depending on ambient air temperatures.\\\"\"\n}",
+      "thinking": "",
+      "parsed": {
+        "rule_id": "OC1",
+        "trigger_parameter": "Abakus People Count",
+        "controlled_parameter": "Thermal Conditions Type and description",
+        "condition_type": "conditional_branching",
+        "branches": [
+          {
+            "condition": "Abakus People Count > 5",
+            "thermal_conditions_type": "Narrow",
+            "thermal_conditions_description": "Fixed setpoint of 22.5C (adj.) with a deadband of 1.5C (adj.)"
+          },
+          {
+            "condition": "Abakus People Count <= 5",
+            "thermal_conditions_type": "Wide",
+            "thermal_conditions_description": "Variable setpoint of 19C to 25C (adj.) with a fixed deadband of 1.5C (adj.) depending on ambient air temperatures."
+          }
+        ],
+        "applies_to": "each floor",
+        "source_text": "\"Operation Mode (For Individual floors): All hours\\nFloor Occupancy from Lighting System: ON\\nHVAC Status: ON\\nAbakus People Count: >5\\nThermal Conditions Type: Narrow\\nThermal Conditions description: Fixed setpoint of 22.5C (adj.) with a deadband of 1.5C (adj.)\\n\\nOperation Mode (For Individual floors): All hours\\nFloor Occupancy from Lighting System: ON\\nHVAC Status: ON\\nAbakus People Count: <=5\\nThermal Conditions Type: Wide\\nThermal Conditions description: Variable setpoint of 19C to 25C (adj.) with a fixed deadband of 1.5C (adj.) depending on ambient air temperatures.\""
+      },
+      "score": 5,
+      "total": 6,
+      "notes": [
+        "rule_id (contains keyword): expected True, got False"
+      ]
+    }
+  ]
+}

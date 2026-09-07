@@ -1,0 +1,74 @@
+{
+  "model": "llama3.2:1b",
+  "source": "hardcoded section text",
+  "timestamp": "2026-09-07T05:00:23.200563+00:00",
+  "results": [
+    {
+      "label": "Easy rule: CO2 Damper Control (1.1.10)",
+      "model": "llama3.2:1b",
+      "raw_output": "{\n  \"rule_id\": \"CO2-Control\",\n  \"trigger_parameter\": \"zone CO2\",\n  \"controlled_parameter\": \"outside air damper\",\n  \"condition_type\": \"proportional\",\n  \"thresholds\": [{\"input\": 600, \"output\": 800}, {\"input\": 800, \"output\": 1000}]\n}",
+      "thinking": "",
+      "parsed": {
+        "rule_id": "CO2-Control",
+        "trigger_parameter": "zone CO2",
+        "controlled_parameter": "outside air damper",
+        "condition_type": "proportional",
+        "thresholds": [
+          {
+            "input": 600,
+            "output": 800
+          },
+          {
+            "input": 800,
+            "output": 1000
+          }
+        ]
+      },
+      "score": 4,
+      "total": 6,
+      "notes": [
+        "thresholds match: expected [{'input': 600, 'output': 40}, {'input': 800, 'output': 80}], got [{'input': 600, 'output': 800}, {'input': 800, 'output': 1000}]",
+        "source_text present: expected True, got False"
+      ]
+    },
+    {
+      "label": "Tricky rule: Occupancy+Temp Setpoint (1.1.13)",
+      "model": "llama3.2:1b",
+      "raw_output": "{\n  \"rule_id\": \"Occupied Mode Control\",\n  \"trigger_parameter\": \"Abakus People Count\",\n  \"controlled_parameter\": \"Floor Occupancy\",\n  \"condition_type\": \"proportional\",\n  \"thresholds\": [\n    {\"input\": 5, \"output\": 22.5},\n    {\"input\": 6, \"output\": 23.5}\n  ],\n  \"branches\": [\n    {\"condition\": \"Abakus People Count > 5\", \"other\": \"Thermal Conditions Type: Narrow\"},\n    {\"condition\": \"Abakus People Count <= 5\", \"other\": \"Thermal Conditions Type: Wide\"}\n  ],\n  \"applies_to\": \"each VRV zone\",\n  \"source_text\": \"Operation Mode (For Individual floors): All hours\",\n  \"condition_type\": \"fixed\"\n}",
+      "thinking": "",
+      "parsed": {
+        "rule_id": "Occupied Mode Control",
+        "trigger_parameter": "Abakus People Count",
+        "controlled_parameter": "Floor Occupancy",
+        "condition_type": "fixed",
+        "thresholds": [
+          {
+            "input": 5,
+            "output": 22.5
+          },
+          {
+            "input": 6,
+            "output": 23.5
+          }
+        ],
+        "branches": [
+          {
+            "condition": "Abakus People Count > 5",
+            "other": "Thermal Conditions Type: Narrow"
+          },
+          {
+            "condition": "Abakus People Count <= 5",
+            "other": "Thermal Conditions Type: Wide"
+          }
+        ],
+        "applies_to": "each VRV zone",
+        "source_text": "Operation Mode (For Individual floors): All hours"
+      },
+      "score": 5,
+      "total": 6,
+      "notes": [
+        "condition_type: expected 'conditional_branching', got 'fixed'"
+      ]
+    }
+  ]
+}
