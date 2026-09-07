@@ -40,21 +40,32 @@ python llama_extraction_test.py --pdf functional_description.pdf --model qwen3:3
 
 | Model | CO2 rule (1.1.10) | Occupancy rule (1.1.13) | Notes |
 |---|---|---|---|
-| llama3.2:1b | unreliable | unreliable | wrong thresholds, trigger/controlled parameters backwards on the harder rule |
-| qwen2.5:7b | correct | correct | one cosmetic `rule_id` naming miss |
+| llama3.2:1b | 4/6 | 5/6 | genuinely wrong on both — see below |
+| qwen2.5:7b | 6/6 | 5/6 | one cosmetic `rule_id` naming miss |
 | qwen2.5:32b | 6/6 | 5/6 | same accuracy as qwen2.5:7b — see `results/extraction_test_qwen32b.json` |
 | qwen3:30b-a3b | 6/6 | 5/6 | same accuracy as qwen2.5:7b, after fixing its hybrid-reasoning mode — see `results/extraction_test_qwen3_30b.json` |
 
 Full raw output (including the model's reasoning, where applicable) is in
-`results/`. Raw files for llama3.2:1b and qwen2.5:7b weren't kept from the
-earlier test runs — everything from qwen2.5:32b onward is preserved in full.
+`results/` for all four models.
 
-The "5/6" on the occupancy rule for both qwen2.5:32b and qwen3:30b-a3b is the
-same cosmetic miss both times: the scorer checks for a specific keyword in
-`rule_id`, and both models named it something else (`"1.1.13"` /
-`"OCCUPANCY_SETPOINT_RULE"`) while getting every substantive field right
-(trigger, controlled parameter, both branches, correct thresholds). Not a
-real extraction error.
+The "5/6" on the occupancy rule for qwen2.5:7b, qwen2.5:32b and qwen3:30b-a3b
+is the same cosmetic miss every time: the scorer checks for a specific
+keyword in `rule_id`, and each model named it something else (`"OC1"`,
+`"1.1.13"`, `"OCCUPANCY_SETPOINT_RULE"`) while getting every substantive
+field right (trigger, controlled parameter, both branches, correct
+thresholds). Not a real extraction error.
+
+llama3.2:1b's 5/6 on the occupancy rule looks deceptively close but isn't —
+its raw output actually contains **two separate `condition_type` keys**
+(`"proportional"` then `"fixed"`) in the same JSON object, an invalid/self-
+contradicting structure that only parsed because the second key silently
+overwrote the first. The scorer read the surviving value and happened to
+still catch it as wrong, but this is a different, worse failure mode than
+"picked the wrong value" — the model doesn't reliably produce coherent JSON
+in the first place. On the CO2 rule its 4/6 is a real miss: the thresholds
+are wrong (`{600→800, 800→1000}` instead of `{600→40, 800→80}`, i.e. it
+echoed the ppm values back as the damper percentages) and `source_text` is
+missing entirely.
 
 ### Key finding
 
